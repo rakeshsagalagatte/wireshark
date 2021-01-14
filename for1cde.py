@@ -17,9 +17,19 @@ def n_MSG_request(filename, MSG):
     print('There are ' + str(int(len(stdout)/2)) + ' ' + MSG + ' packets ')
     if int(len(stdout)/2) == 0:
         return
-    print('Packet ID and HTTP MSG')
+    print('\nPacket ID and HTTP MSG')
     for i in range(0,len(stdout),2):
         print(stdout[i+1] + '\t' + stdout[i])
+
+    return
+
+def n_MSG_response(filename):
+    command = str('tshark -r ' + filename + ' -Y http.response -T fields -e http.response.code -e http.response.phrase').split()
+    n_packet = subprocess.Popen(command , stdout=subprocess.PIPE , stderr=subprocess.STDOUT)
+    stdout,stderr = n_packet.communicate()
+    print('\n\nStatus code and Response pharse')
+    stdout = stdout.decode('utf-8')
+    print(stdout)
 
 
 def main():
@@ -32,6 +42,8 @@ def main():
     filename = sys.argv[1]
     MSG = sys.argv[2]
     n_MSG_request(filename, MSG)
+    n_MSG_response(filename)
+
 
 if __name__=='__main__':
     main()
